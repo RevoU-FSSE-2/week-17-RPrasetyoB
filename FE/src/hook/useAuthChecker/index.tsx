@@ -1,30 +1,41 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+// src/hooks/useTokenChecker.ts
 
-const useAuthChecker = () => {
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const useTokenChecker = () => {
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null); // Specify the type explicitly
   const navigate = useNavigate();
-  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const cookies = document.cookie;
-    const extractedToken = cookies
-      .split(";")
-      .map((cookie) => cookie.trim())
-      .find((cookie) => cookie.startsWith("accessToken"));
+    console.log('document', document.cookie)
+    const storedAccessToken = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('accessToken='))
+      ?.split('=')[1];
+    const storedRefreshToken = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('refreshToken='))
+      ?.split('=')[1];
 
-    if (!extractedToken) {
-      Swal.fire("warning", "Unauthorized");
-      navigate("/login");
-      setToken(null);
-    } else {
-      const splitCookie = extractedToken.split("=");
-      const actualToken = splitCookie.length === 2 ? splitCookie[1] : "";
-      setToken(actualToken);
+    setAccessToken(storedAccessToken || null);
+    setRefreshToken(storedRefreshToken || null);
+
+    if (!storedAccessToken) {
+      navigate('/login');
     }
   }, [navigate]);
 
-  return token;
+  const isAuthenticated = () => {
+    return !!accessToken;
+  };
+
+  return {
+    accessToken,
+    refreshToken,
+    isAuthenticated,
+  };
 };
 
-export default useAuthChecker;
+export default useTokenChecker;

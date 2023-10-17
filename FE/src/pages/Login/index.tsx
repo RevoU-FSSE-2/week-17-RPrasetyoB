@@ -40,14 +40,14 @@ const LoginForm: React.FC = ()=> {
 
       if (response.ok) {
         Swal.fire('Login successful', 'success');
-      
         window.location.replace('/')
-      } else {
+      } else{
         Swal.fire({
           icon: 'error',
           title: 'Login Failed',
-          text: 'Login failed. Please check your credentials.',
+          text: 'Username or Password incorrect',
         });
+        setIsLoading(false)
       }
     } catch (error) {
       console.error('An error occurred:', error);
@@ -56,6 +56,7 @@ const LoginForm: React.FC = ()=> {
         title: 'Login Failed',
         text: 'An error occurred while processing your request. Please try again later.',
       });
+      setIsLoading(false)
     }
     
 
@@ -74,7 +75,6 @@ const LoginForm: React.FC = ()=> {
           errors,
           handleChange,
           handleBlur,
-          isSubmitting,
         }) => (
           <Card style={{
             position: 'fixed',
@@ -120,7 +120,7 @@ const LoginForm: React.FC = ()=> {
                 type="submit"
                 variant="contained"
                 color="primary"
-                disabled={isLoading || isSubmitting}
+                disabled={isLoading}
                 fullWidth
               >
                 {isLoading ? 'Logging in...' : 'Login'}
@@ -130,7 +130,7 @@ const LoginForm: React.FC = ()=> {
                 onClick={()=> navigate('/register')}
                 variant="outlined"
                 color="primary"
-                disabled={isLoading || isSubmitting}
+                disabled={isLoading}
                 fullWidth
               >
                 Sign Up

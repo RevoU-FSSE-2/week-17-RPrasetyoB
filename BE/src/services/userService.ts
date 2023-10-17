@@ -28,10 +28,10 @@ const cache = new NodeCache({ stdTTL: 20 }) as any;
 //------ login ------
 const loginUser = async ({username, password}: LoginInput) => {
     try {
-    const user = await userModel.findOne({ username })
-    const loginAttempts = failedLogins.get(username) || 0
-    console.log('loginAttempts',loginAttempts)
-
+        const user = await userModel.findOne({ username })
+        const loginAttempts = failedLogins.get(username) || 0
+        
+        console.log('loginAttempts',loginAttempts)
         if(loginAttempts >= 4) {
             throw new ErrorCatch({
                 success: false,
@@ -39,23 +39,23 @@ const loginUser = async ({username, password}: LoginInput) => {
                 status: 429
             })
         }  
-        if(!user) {        
-            failedLogins.set(username, loginAttempts + 1)
-            throw new ErrorCatch({
-                success: false,
-                message: 'Username or Password invalid',
-                status: 401
-            })
-        }
-        const isPasswordCorrect = await bcrypt.compare(password, user.password)
-        if (isPasswordCorrect) {
-            const accessTokenExpired = addDays(new Date(), 1)
-            const accessToken = jwt.sign(
-                {
-                    username: user.username,
-                    id: user._id,
-                    role: user.role
-                }, JWT_Sign, {expiresIn: '10m'}
+    if(!user) {        
+        failedLogins.set(username, loginAttempts + 1)
+        throw new ErrorCatch({
+            success: false,
+            message: 'Username or Password invalid',
+            status: 401
+        })
+    }
+    const isPasswordCorrect = await bcrypt.compare(password, user.password)
+    if (isPasswordCorrect) {
+        const accessTokenExpired = addDays(new Date(), 1)
+        const accessToken = jwt.sign(
+            {
+                username: user.username,
+                id: user._id,
+                role: user.role
+            }, JWT_Sign, {expiresIn: '10m'}
             );
             const refreshTokenPayload : JwtPayload = {
                 username: user.username,
@@ -66,7 +66,7 @@ const loginUser = async ({username, password}: LoginInput) => {
                 expiresIn: '7d',
             })
             await failedLogins.del(username);
-
+            
             return{
                 success: true,
                 message: {

@@ -11,18 +11,18 @@ const jwt_1 = require("../config/auth/jwt");
 const getCookie_1 = require("../utils/getCookie");
 //------ Login user ------
 const login = async (req, res, next) => {
-    const { username, password } = req.body;
-    const result = await (0, userService_1.loginUser)({ username, password });
     try {
+        const { username, password } = req.body;
+        const result = await (0, userService_1.loginUser)({ username, password });
         if (result.success) {
             res.cookie("accessToken", result.message.accessToken, {
-                maxAge: 15 * 1000,
-                httpOnly: true,
+                maxAge: 4 * 60 * 1000,
+                sameSite: 'lax',
                 path: '/'
             });
             res.cookie("refreshToken", result.message.refreshToken, {
                 maxAge: 1 * 60 * 60 * 1000,
-                httpOnly: true,
+                sameSite: 'lax',
                 path: '/'
             });
             return res.status(200).json({
@@ -39,9 +39,9 @@ const login = async (req, res, next) => {
 exports.login = login;
 //------ Create user ------
 const regUser = async (req, res, next) => {
-    const { username, email, password } = req.body;
-    const result = await (0, userService_1.registerUser)({ username, email, password });
     try {
+        const { username, email, password } = req.body;
+        const result = await (0, userService_1.registerUser)({ username, email, password });
         if (result.success) {
             res.status(201).json({
                 success: true,
@@ -57,9 +57,9 @@ const regUser = async (req, res, next) => {
 exports.regUser = regUser;
 //------ Update Role ------
 const update = async (req, res, next) => {
-    const decodedToken = (0, getCookie_1.getToken)(req);
-    const { userRole } = (0, getCookie_1.loggedUser)(decodedToken);
     try {
+        const decodedToken = (0, getCookie_1.getToken)(req);
+        const { userRole } = (0, getCookie_1.loggedUser)(decodedToken);
         if (!decodedToken) {
             return res.status(401).json({ success: false, message: "Unauthorized: Missing Token" });
         }

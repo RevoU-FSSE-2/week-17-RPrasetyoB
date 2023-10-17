@@ -40,7 +40,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 // interface //
 interface Category {
   id: string;
-  name: string;
+  task: string;
   status: string;
   maker:string;
 }
@@ -50,30 +50,21 @@ interface User {
 }
 
 const HomePage: React.FC = () => {
-
-  // navigation //
   const navigate = useNavigate();
-
-  // auth checker //
-  const token = localStorage.getItem('authToken')
   useAuthChecker()
-
-  // useState //
   const [categories, setCategories] = useState<Category[]>([]);
-
-  // fetching //
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchCategory = async () => {
     try {
       const Url = ApiUrl + "/v1/tasks";
       const response = await fetch(Url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        method: 'GET',
+        credentials: 'include'
       });
       if (response.ok) {
         const data = await response.json();
-        setCategories(data.data);
+        console.log('data',data)
+        setCategories(data.result.data);
       } else {
         console.error("Failed to fetch categories");
       }
@@ -83,7 +74,7 @@ const HomePage: React.FC = () => {
   };
   useEffect(() => {  
         fetchCategory();
-  }, [fetchCategory]);
+  }, []);
 
   // log out //
   const handleLogout = () => {
@@ -99,9 +90,7 @@ const HomePage: React.FC = () => {
       const Url = ApiUrl + '/v1/tasks'
       await fetch(Url, {
         method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
+        credentials: 'include'
       });
     } catch (error) {
       console.error(error);      
@@ -119,9 +108,9 @@ const HomePage: React.FC = () => {
       const response = await fetch(Url, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
+        credentials: 'include'
       });
 
       if (response.ok) {
@@ -170,7 +159,6 @@ const HomePage: React.FC = () => {
           <Table aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell align="left">ID</StyledTableCell>
                 <StyledTableCell align="center">Name</StyledTableCell>
                 <StyledTableCell align="center">Status</StyledTableCell>
                 <StyledTableCell align="center">Maker</StyledTableCell>
@@ -187,11 +175,8 @@ const HomePage: React.FC = () => {
               ) : (
                 categories.map((category) => (
                   <StyledTableRow key={category.id} className="tr">
-                    <StyledTableCell component="th" scope="row" className="td">
-                      {category.id.slice(20,36)}
-                    </StyledTableCell>
                     <StyledTableCell align="center" className="td" style={{maxWidth: '200px', overflow: 'auto'}}>
-                      {category.name}
+                      {category.task}
                     </StyledTableCell>
                     <StyledTableCell align="center">
                       {category.status}

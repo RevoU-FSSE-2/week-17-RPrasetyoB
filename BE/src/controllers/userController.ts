@@ -7,19 +7,18 @@ import { getToken, loggedUser } from '../utils/getCookie';
 
 //------ Login user ------
 const login = async (req: Request, res: Response, next: NextFunction) => {
-  const { username, password } = req.body;
-  const result = await loginUser({ username, password });
-
   try {
+    const { username, password } = req.body;
+    const result = await loginUser({ username, password });
     if (result.success) {  
       res.cookie("accessToken", result.message.accessToken, {
-        maxAge: 15 * 1000,
-        httpOnly: true,
+        maxAge: 4* 60 * 1000,
+        sameSite: 'lax',
         path: '/'
       });
       res.cookie("refreshToken", result.message.refreshToken, {
         maxAge: 1 * 60 * 60 * 1000,
-        httpOnly: true,
+        sameSite: 'lax',
         path:'/'
       });
 
@@ -37,10 +36,10 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 //------ Create user ------
 const regUser = async (req : Request, res: Response, next: NextFunction) => {
+  try {
   const { username, email, password } = req.body;
   const result = await registerUser({ username, email, password})
 
-  try {
     if (result.success) {
       res.status(201).json({
         success: true,
@@ -56,10 +55,10 @@ const regUser = async (req : Request, res: Response, next: NextFunction) => {
 
 //------ Update Role ------
 const update = async (req: Request, res: Response, next: NextFunction) => {
+  try {
   const decodedToken = getToken(req)
   const { userRole } = loggedUser(decodedToken);
-  
-  try {
+
     if (!decodedToken) {
       return res.status(401).json({ success: false, message: "Unauthorized: Missing Token" });
     }
