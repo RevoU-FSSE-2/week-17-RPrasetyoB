@@ -1,23 +1,23 @@
 import { Request, Response } from "express";
 import { taskModel } from "../config/schemas/schema";
 import { deleteMakerTasks, getMakerTasks, updateMakerTasks } from "../services/taskService";
-import getCookie from "../utils/getCookie";
-import jwt from "jsonwebtoken";
+import { getToken, loggedUser } from "../utils/getCookie";
 
 //------ getTasks ------
 const getAllTask = async (req: Request, res: Response) => {
-  const tokenCookie = getCookie(req);
-  const decodedToken: jwt.JwtPayload = jwt.decode(tokenCookie) as jwt.JwtPayload;
-  const userRole = decodedToken.role;
+  const decodedToken = getToken(req)
+  const { userRole, username } = loggedUser(decodedToken);
+  console.log('userRole',userRole)
+
   try {
     if (userRole === "manager") {
       const task = await getMakerTasks();
       return res.status(200).json({
+        success: true,
         message: "Successfully fetched all tasks",
         result: task,
       });
     } else {
-      const username = decodedToken.username;
       const task = await getMakerTasks(username);
       return res.status(200).json({
         success: true,
@@ -35,11 +35,9 @@ const getAllTask = async (req: Request, res: Response) => {
 };
 
 const createTask = async (req: Request, res: Response) => {
-  const tokenCookie = getCookie(req);
-  const decodedToken: jwt.JwtPayload = jwt.decode(
-    tokenCookie
-  ) as jwt.JwtPayload;
-  const username = decodedToken.username;
+  const decodedToken = getToken(req)
+  const { username } = loggedUser(decodedToken);
+
   try {
     const { task } = req.body;
 
@@ -56,11 +54,8 @@ const createTask = async (req: Request, res: Response) => {
 };
 
 const updateTask = async (req: Request, res: Response) => {
-  const tokenCookie = getCookie(req);
-  const decodedToken: jwt.JwtPayload = jwt.decode(
-    tokenCookie
-  ) as jwt.JwtPayload;
-  const username = decodedToken.username;
+  const decodedToken = getToken(req)
+  const { username } = loggedUser(decodedToken);
 
   try {
     const { id } = req.params;
@@ -91,9 +86,8 @@ const updateTask = async (req: Request, res: Response) => {
 };
 
 const deleteTask = async (req: Request, res: Response) => {
-  const tokenCookie = getCookie(req);
-  const decodedToken: jwt.JwtPayload = jwt.decode(tokenCookie) as jwt.JwtPayload;
-  const username = decodedToken.username;
+  const decodedToken = getToken(req)
+  const { username } = loggedUser(decodedToken);
 
   try {
     const { id } = req.params;

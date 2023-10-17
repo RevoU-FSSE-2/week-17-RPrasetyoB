@@ -1,28 +1,24 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTask = exports.updateTask = exports.getAllTask = exports.createTask = void 0;
 const schema_1 = require("../config/schemas/schema");
 const taskService_1 = require("../services/taskService");
-const getCookie_1 = __importDefault(require("../utils/getCookie"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const getCookie_1 = require("../utils/getCookie");
 //------ getTasks ------
 const getAllTask = async (req, res) => {
-    const tokenCookie = (0, getCookie_1.default)(req);
-    const decodedToken = jsonwebtoken_1.default.decode(tokenCookie);
-    const userRole = decodedToken.role;
+    const decodedToken = (0, getCookie_1.getToken)(req);
+    const { userRole, username } = (0, getCookie_1.loggedUser)(decodedToken);
+    console.log('userRole', userRole);
     try {
         if (userRole === "manager") {
             const task = await (0, taskService_1.getMakerTasks)();
             return res.status(200).json({
+                success: true,
                 message: "Successfully fetched all tasks",
                 result: task,
             });
         }
         else {
-            const username = decodedToken.username;
             const task = await (0, taskService_1.getMakerTasks)(username);
             return res.status(200).json({
                 success: true,
@@ -41,9 +37,8 @@ const getAllTask = async (req, res) => {
 };
 exports.getAllTask = getAllTask;
 const createTask = async (req, res) => {
-    const tokenCookie = (0, getCookie_1.default)(req);
-    const decodedToken = jsonwebtoken_1.default.decode(tokenCookie);
-    const username = decodedToken.username;
+    const decodedToken = (0, getCookie_1.getToken)(req);
+    const { username } = (0, getCookie_1.loggedUser)(decodedToken);
     try {
         const { task } = req.body;
         const newTask = await schema_1.taskModel.create({ task, maker: username });
@@ -60,9 +55,8 @@ const createTask = async (req, res) => {
 };
 exports.createTask = createTask;
 const updateTask = async (req, res) => {
-    const tokenCookie = (0, getCookie_1.default)(req);
-    const decodedToken = jsonwebtoken_1.default.decode(tokenCookie);
-    const username = decodedToken.username;
+    const decodedToken = (0, getCookie_1.getToken)(req);
+    const { username } = (0, getCookie_1.loggedUser)(decodedToken);
     try {
         const { id } = req.params;
         const { status } = req.body;
@@ -93,9 +87,8 @@ const updateTask = async (req, res) => {
 };
 exports.updateTask = updateTask;
 const deleteTask = async (req, res) => {
-    const tokenCookie = (0, getCookie_1.default)(req);
-    const decodedToken = jsonwebtoken_1.default.decode(tokenCookie);
-    const username = decodedToken.username;
+    const decodedToken = (0, getCookie_1.getToken)(req);
+    const { username } = (0, getCookie_1.loggedUser)(decodedToken);
     try {
         const { id } = req.params;
         const task = await schema_1.taskModel.findOne({ _id: id });

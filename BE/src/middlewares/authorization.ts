@@ -1,23 +1,19 @@
 import { Request, Response, NextFunction} from 'express'
-import getCookie from '../utils/getCookie';
-import jwt from 'jsonwebtoken'
+import { getToken, loggedUser } from '../utils/getCookie';
 
 
 const roleAuthorization = (allowedRoles: ('manager' | 'leader' | 'member')[]) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const token = getCookie(req);
-    const decoded: jwt.JwtPayload = jwt.decode(token) as jwt.JwtPayload;
+    const decodedToken = getToken(req)
+  const { userRole } = loggedUser(decodedToken);
 
-    if (!token) {
+    if (!decodedToken) {
       return res.status(401).send({ message: "Token not provided" });
     }
 
     try {
-      req.userId = decoded._id;
-      req.username = decoded.username;
-      req.userRole = decoded.role;
-
-      if (req.userRole && !allowedRoles.includes(req.userRole)) {
+      
+      if (req.userRole && !allowedRoles.includes(userRole)) {
         return res.status(403).send({ message: "Access forbidden: Role not allowed" });
       }
 

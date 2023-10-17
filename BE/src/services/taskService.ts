@@ -9,7 +9,6 @@ const getMakerTasks = async (username?: string) => {
       : { isDeleted: { $exists: false } };
     const tasks = await taskModel.find(query);
     return {
-      success: true,
       status: 200,
       data: tasks,
     };

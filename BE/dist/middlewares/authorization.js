@@ -1,22 +1,15 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const getCookie_1 = __importDefault(require("../utils/getCookie"));
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const getCookie_1 = require("../utils/getCookie");
 const roleAuthorization = (allowedRoles) => {
     return async (req, res, next) => {
-        const token = (0, getCookie_1.default)(req);
-        const decoded = jsonwebtoken_1.default.decode(token);
-        if (!token) {
+        const decodedToken = (0, getCookie_1.getToken)(req);
+        const { userRole } = (0, getCookie_1.loggedUser)(decodedToken);
+        if (!decodedToken) {
             return res.status(401).send({ message: "Token not provided" });
         }
         try {
-            req.userId = decoded._id;
-            req.username = decoded.username;
-            req.userRole = decoded.role;
-            if (req.userRole && !allowedRoles.includes(req.userRole)) {
+            if (req.userRole && !allowedRoles.includes(userRole)) {
                 return res.status(403).send({ message: "Access forbidden: Role not allowed" });
             }
             next();

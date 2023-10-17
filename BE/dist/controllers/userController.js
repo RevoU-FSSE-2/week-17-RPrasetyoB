@@ -7,13 +7,13 @@ exports.accessTokenRefresh = exports.resetPassReq = exports.resetPass = exports.
 const schema_1 = require("../config/schemas/schema");
 const userService_1 = require("../services/userService");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const getCookie_1 = __importDefault(require("../utils/getCookie"));
 const jwt_1 = require("../config/auth/jwt");
+const getCookie_1 = require("../utils/getCookie");
 //------ Login user ------
 const login = async (req, res, next) => {
+    const { username, password } = req.body;
+    const result = await (0, userService_1.loginUser)({ username, password });
     try {
-        const { username, password } = req.body;
-        const result = await (0, userService_1.loginUser)({ username, password });
         if (result.success) {
             res.cookie("accessToken", result.message.accessToken, {
                 maxAge: 15 * 1000,
@@ -39,9 +39,9 @@ const login = async (req, res, next) => {
 exports.login = login;
 //------ Create user ------
 const regUser = async (req, res, next) => {
+    const { username, email, password } = req.body;
+    const result = await (0, userService_1.registerUser)({ username, email, password });
     try {
-        const { username, email, password } = req.body;
-        const result = await (0, userService_1.registerUser)({ username, email, password });
         if (result.success) {
             res.status(201).json({
                 success: true,
@@ -57,13 +57,12 @@ const regUser = async (req, res, next) => {
 exports.regUser = regUser;
 //------ Update Role ------
 const update = async (req, res, next) => {
-    const tokenCookie = (0, getCookie_1.default)(req);
+    const decodedToken = (0, getCookie_1.getToken)(req);
+    const { userRole } = (0, getCookie_1.loggedUser)(decodedToken);
     try {
-        if (!tokenCookie) {
+        if (!decodedToken) {
             return res.status(401).json({ success: false, message: "Unauthorized: Missing Token" });
         }
-        const decodedToken = jsonwebtoken_1.default.decode(tokenCookie);
-        const userRole = decodedToken.role;
         if (userRole !== 'manager') {
             return res.status(403).json({ success: false, message: "Unauthorized: Insufficient Permissions" });
         }

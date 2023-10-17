@@ -2,14 +2,15 @@ import { NextFunction, Request, Response } from 'express';
 import { userModel } from '../config/schemas/schema';
 import { loginUser, passResetReq, passwordReset, registerUser, updateRole } from '../services/userService'
 import jwt from 'jsonwebtoken'
-import getCookie from '../utils/getCookie';
 import { JWT_Sign } from '../config/auth/jwt';
+import { getToken, loggedUser } from '../utils/getCookie';
 
 //------ Login user ------
 const login = async (req: Request, res: Response, next: NextFunction) => {
+  const { username, password } = req.body;
+  const result = await loginUser({ username, password });
+
   try {
-    const { username, password } = req.body;
-    const result = await loginUser({ username, password });
     if (result.success) {  
       res.cookie("accessToken", result.message.accessToken, {
         maxAge: 15 * 1000,
@@ -36,9 +37,10 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 //------ Create user ------
 const regUser = async (req : Request, res: Response, next: NextFunction) => {
+  const { username, email, password } = req.body;
+  const result = await registerUser({ username, email, password})
+
   try {
-    const { username, email, password } = req.body;
-    const result = await registerUser({ username, email, password})
     if (result.success) {
       res.status(201).json({
         success: true,
@@ -54,18 +56,21 @@ const regUser = async (req : Request, res: Response, next: NextFunction) => {
 
 //------ Update Role ------
 const update = async (req: Request, res: Response, next: NextFunction) => {
-  const tokenCookie = getCookie(req);
+  const decodedToken = getToken(req)
+  const { userRole } = loggedUser(decodedToken);
+  
   try {
-    if (!tokenCookie) {
+    if (!decodedToken) {
       return res.status(401).json({ success: false, message: "Unauthorized: Missing Token" });
     }
-    const decodedToken: jwt.JwtPayload = jwt.decode(tokenCookie) as jwt.JwtPayload;
-    const userRole = decodedToken.role;
+
     if (userRole !== 'manager') {
       return res.status(403).json({ success: false, message: "Unauthorized: Insufficient Permissions" });
     }
+    
     const { username, role } = req.body;
     const updatedRole = await updateRole({ username, role });
+
     if (updatedRole.success) {
       return res.status(200).json({ success: true, message: 'Role updated successfully', updatedRole });
     } else {
