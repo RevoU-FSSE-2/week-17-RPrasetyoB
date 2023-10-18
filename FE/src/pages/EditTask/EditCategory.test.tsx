@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { act } from 'react-dom/test-utils'
-import AddCategory from'./';
+import EditCategory from'.';
 import { BrowserRouter } from 'react-router-dom';
 
 global.fetch = jest.fn().mockResolvedValue({
@@ -23,51 +23,50 @@ describe('test add category form', () => {
       })),
     });
   });  
-    test('Add category Title render correctly', async () => {
-        render(
-            <BrowserRouter>
-              <AddCategory />
-            </BrowserRouter>
-          );
-        expect(screen.getByText('Add Category')).toBeDefined();
+    test('Edit category Title form render correctly', async () => {
+      render(
+          <BrowserRouter>
+            <EditCategory />
+          </BrowserRouter>
+        );
+      expect(screen.getByText('Edit Category')).toBeDefined();
     })
 
-    test('labels category render correctly', async () => {
-        render(
-            <BrowserRouter>
-              <AddCategory />
-            </BrowserRouter>
-          );
-        expect(screen.getByText('Category')).toBeDefined();
-        expect(screen.getByText('Status')).toBeDefined();
+    test('labels Edit category render correctly', async () => {
+      render(
+          <BrowserRouter>
+            <EditCategory />
+          </BrowserRouter>
+        );
+      expect(screen.getByText('Category')).toBeDefined();
+      expect(screen.getByText('Status')).toBeDefined();
     })
 
-    test('Buttons render correctly', async () => {
-        render(
-            <BrowserRouter>
-              <AddCategory />
-            </BrowserRouter>
-          );
-          expect(screen.getByText('Add')).toBeDefined();
-          expect(screen.getByText('Cancel')).toBeDefined();
+    test('buttons render correctly', async () => {
+      render(
+          <BrowserRouter>
+            <EditCategory />
+          </BrowserRouter>
+        );
+      expect(screen.getByText('Update')).toBeDefined();
+      expect(screen.getByText('Cancel')).toBeDefined();
     })
 
   test('submits the form and set token in localStorage', async () => {   
       render(<BrowserRouter>
-              <AddCategory />
+              <EditCategory />
             </BrowserRouter>)
-      const category = screen.getByPlaceholderText('Enter new category');
+      const category = screen.getByPlaceholderText('Enter update category');
       const status = screen.getByPlaceholderText('Choose status');
-      const button = screen.getByText('Add');
+      const button = screen.getByText('Update');
 
       act(() => {
           fireEvent.change(category, { target: { value : 'test'}});
           fireEvent.change(status, { target: { value : 'true'}});
           fireEvent.click(button);
       })
-
       await waitFor(() => {
-          expect(global.fetch).toHaveBeenCalledWith('https://mock-api.arikmpt.com/api/category', expect.any(Object));
+          expect(global.fetch).toHaveBeenCalledWith('https://mock-api.arikmpt.com/api/category/update', expect.any(Object));
       })
     })
 })

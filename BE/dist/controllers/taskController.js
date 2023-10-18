@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteTask = exports.updateTask = exports.getAllTask = exports.createTask = void 0;
+exports.getOneTask = exports.deleteTask = exports.updateTask = exports.getAllTask = exports.createTask = void 0;
 const schema_1 = require("../config/schemas/schema");
 const taskService_1 = require("../services/taskService");
 const getCookie_1 = require("../utils/getCookie");
@@ -36,6 +36,30 @@ const getAllTask = async (req, res) => {
     }
 };
 exports.getAllTask = getAllTask;
+const getOneTask = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const task = await schema_1.taskModel.findById(id);
+        if (!task) {
+            return res.status(404).json({
+                message: "Task not found"
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: "success get task",
+            user: task,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            success: false,
+            message: "Internal server erro while get Task or Task id wrong format"
+        });
+    }
+};
+exports.getOneTask = getOneTask;
 const createTask = async (req, res) => {
     const decodedToken = (0, getCookie_1.getToken)(req);
     const { username } = (0, getCookie_1.loggedUser)(decodedToken);

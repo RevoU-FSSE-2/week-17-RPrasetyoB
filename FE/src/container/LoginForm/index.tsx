@@ -7,20 +7,20 @@ import { ApiUrl } from "../../utils/api";
 import Swal from "sweetalert2";
 
 const validationSchema = Yup.object().shape({
-  username: Yup.string().required("Username is required"),
-  password: Yup.string().required("Password is required"),
-});
-interface loginValue {
-  username: string;
-  password: string;
-}
-const initialValues = {
-  username: "",
-  password: "",
-};
+    username: Yup.string().required("Username is required"),
+    password: Yup.string().required("Password is required"),
+  });
+  interface loginValue {
+    username: string;
+    password: string;
+  }
+  const initialValues = {
+    username: "",
+    password: "",
+  };
 
-const LoginForm: React.FC = () => {
-  const navigate = useNavigate();
+const LoginForm : React.FC = () => {
+    const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const handleSubmit = async (values: loginValue) => {
     setIsLoading(true);
@@ -62,7 +62,7 @@ const LoginForm: React.FC = () => {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <>
       <Formik
@@ -154,5 +154,3 @@ const LoginForm: React.FC = () => {
     </>
   );
 };
-
-export default LoginForm;

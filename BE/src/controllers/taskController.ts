@@ -34,6 +34,30 @@ const getAllTask = async (req: Request, res: Response) => {
   }
 };
 
+const getOneTask = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params
+    const task = await taskModel.findById(id);
+    if(!task) {
+      return res.status(404).json({
+        message: "Task not found"
+      })
+    }
+      
+    return res.status(200).json({
+      success: true,
+      message: "success get task",
+      user: task,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({
+      success: false,
+      message: "Internal server erro while get Task or Task id wrong format"
+    });
+  }
+};
+
 const createTask = async (req: Request, res: Response) => {
   const decodedToken = getToken(req)
   const { username } = loggedUser(decodedToken);
@@ -123,4 +147,4 @@ const deleteTask = async (req: Request, res: Response) => {
   }
 };
 
-export { createTask, getAllTask, updateTask, deleteTask };
+export { createTask, getAllTask, updateTask, deleteTask, getOneTask  };

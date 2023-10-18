@@ -1,85 +1,58 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Form, Formik } from "formik";
-import { Button, TextField, Card, Typography, CardContent, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from "@mui/material";
+import { Button, Card, Typography, CardContent, Select, MenuItem, FormControl, InputLabel, SelectChangeEvent } from "@mui/material";
 import * as Yup from "yup";
 import { useNavigate, useParams } from "react-router-dom";
-import { ApiUrl } from "../../utils/api";
 import Swal from "sweetalert2";
 import { useAuthChecker } from "../../hook";
+import { ApiUrl } from "../../utils/api";
+import { AppContext } from "../../provider/AppProvider";
 
 const validationSchema = Yup.object().shape({
-  status: Yup.string().required("updated task is required"),
+  status: Yup.string().required("Status is required"),
 });
 
 interface EditCategory {
-  status?: string;
+  status: string;
 }
 
-
-
 const EditCategory: React.FC = () => {
-  const navigate = useNavigate();  
-  const { id } = useParams();
-  const Url1 = ApiUrl + `/category/${id}`;
-  const token = localStorage.getItem('authToken')
-  useAuthChecker()
-  
-  const [category, setCategory] = useState<EditCategory>();
-  
-  const initialValues = {
-      status: category?.status,
-    };
+  const navigate = useNavigate();
+  const { _id } = useParams<{ _id: string }>();
+  const { categories } = useContext(AppContext);
+  useAuthChecker();
+
+  const category = categories.find((category) => category._id === _id);
+
+  const initialValues: EditCategory = {
+    status: category?.status || "",
+  };
 
   const [isLoading, setIsLoading] = useState(false);
-  const [status, setStatus] = useState(initialValues.status);
-
-  const getCategory = useCallback(
-    async () => {
-      const response = await fetch(Url1, {
-        headers:{
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      const data = await response.json();      
-      setCategory(data.data);
-    },
-    [Url1, token]
-  );
-  
-  useEffect(
-    ()=> {
-      getCategory();
-    },
-    [getCategory]
-  );
-
-
-  const handleStatus = (event: SelectChangeEvent) => {
-    const newStatus = event.target.value as string;
-    setStatus(newStatus);
-  }
 
   const handleSubmit = async (values: EditCategory) => {
     setIsLoading(true);
 
-    const Url = ApiUrl + `/category/update`;
+    const Url = ApiUrl + `/v1/tasks/${category?._id}`;
     try {
-      await fetch(Url, {
+      const response = await fetch(Url, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(values),
-        credentials : 'include',
+        credentials: 'include',
       });
-      Swal.fire({
-        icon: 'success',
-        title: 'Add Category Success',
-        text: 'Successfully added category.',
+      if(response.ok){
+        Swal.fire({
+          icon: 'success',
+          title: 'Update Category Success',
+          text: 'Successfully updated category.',
         });
+      }
       navigate('/');
     } catch (error) {
-      console.log(error);
+      console.error("Error updating category", error);
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +60,7 @@ const EditCategory: React.FC = () => {
 
   const handleCancel = () => {
     navigate('/');
-  };  
+  };
 
   return (
     <>
@@ -97,12 +70,13 @@ const EditCategory: React.FC = () => {
         onSubmit={handleSubmit}
       >
         {({
-            handleSubmit,
-            touched,
-            errors,
-            handleChange,
-            handleBlur,
-            isSubmitting,
+          handleSubmit,
+          isSubmitting,
+          values,
+          handleChange,
+          handleBlur,
+          touched,
+          errors,
         }) => (
           <Card
             style={{
@@ -111,12 +85,10 @@ const EditCategory: React.FC = () => {
               left: '50%',
               transform: 'translate(-50%, -50%)',
               width: '300px',
-              padding: '20px'}}>
-            <Typography
-              sx={{ fontSize: 18 }}
-              color="text.secondary"
-              gutterBottom
-            >
+              padding: '20px',
+            }}
+          >
+            <Typography sx={{ fontSize: 18 }} color="text.secondary" gutterBottom>
               Edit Category
             </Typography>
             <Form onSubmit={handleSubmit}>
@@ -127,15 +99,19 @@ const EditCategory: React.FC = () => {
                     label="Status"
                     name="status"
                     placeholder="Choose new status"
-                    onChange={handleStatus}
-                    value={status}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.status}
                     required
                   >
-                    <MenuItem value={"Not started"}>Not started</MenuItem>
-                    <MenuItem value={"Rejected"}>Rejected</MenuItem>
-                    <MenuItem value={"Approved"}>Approved</MenuItem>
+                    <MenuItem value="Not started">Not started</MenuItem>
+                    <MenuItem value="Rejected">Rejected</MenuItem>
+                    <MenuItem value="Approved">Approved</MenuItem>
                   </Select>
                 </FormControl>
+                {touched.status && errors.status && (
+                  <div className="error">{errors.status}</div>
+                )}
               </CardContent>
               <Button
                 style={{ marginBottom: 10 }}

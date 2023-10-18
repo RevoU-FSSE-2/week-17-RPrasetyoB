@@ -12,8 +12,8 @@ const partnerOrigin = [
   ];
 
 const corsOptions = ( req: Request | any,
-    callback: (err: Error | null, options?: CorsOptions) => void
-    ) => {
+    callback: (err: Error | null, options?: CorsOptions) => void) =>
+    {
         const clientOrigin = origin.includes(req.header("Origin"));
         const clientPartnerOrigin = partnerOrigin.includes(req.header("Origin"));
 

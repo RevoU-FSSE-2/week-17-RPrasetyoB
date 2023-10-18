@@ -1,6 +1,6 @@
 import { BrowserRouter } from 'react-router-dom'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
-import HomePage from './';
+import HomePage from '.';
 import { fetchMockCategories } from './fetchMockCategories';
 
 describe('HomePage', () => {

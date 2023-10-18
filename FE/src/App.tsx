@@ -3,6 +3,7 @@ import './App.css'
 // import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { PublicLayout } from './LayOut'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { AppProvider } from './provider'
 
 const App = () => {
   
@@ -19,7 +20,7 @@ const App = () => {
           element: <AddCategory />
         },
         {
-          path: '/edit/:id',
+          path: '/edit/:_id',
           element: <EditCategory />
         },
         {
@@ -40,16 +41,10 @@ const App = () => {
 
 
   return (
-    <RouterProvider router={router} />
-    // <BrowserRouter>
-    //   <Routes>
-    //     <Route path='/' element={<HomePage />} />
-    //     <Route path='/login' element={<LoginForm />} />
-    //     <Route path='/register' element={<RegisterForm />} />
-    //     <Route path='/add' element={<AddCategory />} />
-    //     <Route path='/edit' element={<EditCategory />} />        
-    //   </Routes>
-    // </BrowserRouter>
+    <AppProvider>
+      <RouterProvider router={router} />
+    </AppProvider>
+    
   )
 }
 

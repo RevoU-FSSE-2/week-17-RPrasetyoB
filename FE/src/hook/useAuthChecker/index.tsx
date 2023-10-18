@@ -9,7 +9,6 @@ const useTokenChecker = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('document', document.cookie)
     const storedAccessToken = document.cookie
       .split('; ')
       .find((row) => row.startsWith('accessToken='))
