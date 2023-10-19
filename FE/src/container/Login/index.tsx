@@ -3,45 +3,34 @@ import { Form, Formik } from "formik";
 import { Button, TextField, Card, Typography, CardContent } from "@mui/material";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { ApiUrl } from "../../utils/api";
+import useFetchApi from "../../utils/FetchApi";
 import Swal from "sweetalert2";
+import { useFormik } from 'formik';
 
 const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Username is required"),
-    password: Yup.string().required("Password is required"),
-  });
-  interface loginValue {
-    username: string;
-    password: string;
-  }
-  const initialValues = {
-    username: "",
-    password: "",
-  };
+  username: Yup.string().required("Username is required"),
+  password: Yup.string().required("Password is required"),
+});
 
-const LoginForm : React.FC = () => {
-    const navigate = useNavigate();
+const initialValues = {
+  username: "",
+  password: "",
+};
+
+const Login: React.FC = () => {
+  const { loginUser } = useFetchApi();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const handleSubmit = async (values: loginValue) => {
-    setIsLoading(true);
 
-    const Url = ApiUrl + "/v1/auth/login";
+  const handleSubmit = async (values: typeof initialValues) => {
+    setIsLoading(true)
     try {
-      const response = await fetch(Url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-        credentials: "include",
-      });
-      await response.json();
-
-      if (response.ok) {
+      const response = await loginUser(values);
+      if (response?.status == 200) {
         Swal.fire({
           icon: "success",
           title: "Login",
-          text: "Login successfull",
+          text: "Login successful",
         });
         window.location.replace("/");
       } else {
@@ -62,7 +51,13 @@ const LoginForm : React.FC = () => {
       setIsLoading(false);
     }
   };
-  
+
+  const formik = useFormik({
+    initialValues: initialValues,
+    validationSchema: validationSchema,
+    onSubmit: (values) => handleSubmit(values),
+  });
+
   return (
     <>
       <Formik
@@ -70,7 +65,7 @@ const LoginForm : React.FC = () => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ handleSubmit, touched, errors, handleChange, handleBlur }) => (
+        {({ touched, errors, handleChange, handleBlur }) => (
           <Card
             style={{
               position: "fixed",
@@ -88,7 +83,7 @@ const LoginForm : React.FC = () => {
             >
               Login Form
             </Typography>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={formik.handleSubmit}>
               <CardContent>
                 <TextField
                   label="Username"
@@ -97,8 +92,9 @@ const LoginForm : React.FC = () => {
                   placeholder="Enter username"
                   fullWidth
                   required
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  value={formik.values.username}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   error={Boolean(touched.username && errors.username)}
                   helperText={touched.username && errors.username}
                   sx={{ mb: 2 }}
@@ -111,8 +107,9 @@ const LoginForm : React.FC = () => {
                   placeholder="Enter password"
                   fullWidth
                   required
-                  onChange={handleChange}
-                  onBlur={handleBlur}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   error={Boolean(touched.password && errors.password)}
                   helperText={touched.password && errors.password}
                   sx={{ mb: 2 }}
@@ -154,3 +151,5 @@ const LoginForm : React.FC = () => {
     </>
   );
 };
+
+export default Login;

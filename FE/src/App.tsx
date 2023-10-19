@@ -1,4 +1,4 @@
-import { LoginForm, RegisterForm, AddCategory, EditCategory, HomePage, ProfilePage } from './pages'
+import { LoginForm, RegisterForm, AddCategory, EditCategory, HomePage } from './pages'
 import './App.css'
 // import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { PublicLayout } from './LayOut'
@@ -23,10 +23,10 @@ const App = () => {
           path: '/edit/:_id',
           element: <EditCategory />
         },
-        {
-          path: '/profile/:id',
-          element: <ProfilePage />
-        }
+        // {
+        //   path: '/profile/:id',
+        //   element: <ProfilePage />
+        // }
       ]
     },
     {

@@ -2,12 +2,39 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { ApiUrl } from "./api";
 
+interface loginValue {
+  username: string;
+  password: string;
+}
+
 const useFetchApi = () => {
   const navigate = useNavigate();
 
+  const loginUser = async (values : loginValue) => {
+    try {
+      const Url = ApiUrl + '/v1/auth/login';
+      const response = await fetch(Url, {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+        credentials: "include", 
+      })
+      return response
+    } catch (error) {
+      console.error("An error occurred:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: "An error occurred while processing your request. Please try again later.",
+      });
+    }
+  }  
+
   const fetchList = async () => {
     try {
-      const Url = ApiUrl + "/v1/tasks";
+      const Url = ApiUrl + '/v1/tasks';
       const response = await fetch(Url, {
         method: "GET",
         credentials: "include",
@@ -42,6 +69,7 @@ const useFetchApi = () => {
   };
 
   return {
+    loginUser,
     fetchList,
     deleteTask,
     handleLogout,
