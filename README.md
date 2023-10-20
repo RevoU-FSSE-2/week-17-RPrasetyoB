@@ -22,7 +22,14 @@ This project provides a web-based interface to manage a collection of items. You
 - POST /v1/tasks: Create a new task.
 - PUT /v1/tasks/:id : Update task status. (only task maker have permission)
 - DELETE /v1/tasks/:id : Delete a task. only task maker have permission)
-  
+
+## Light house testing :
+- Mobile : <br>
+![Screenshot_23](https://github.com/RevoU-FSSE-2/week-17-RPrasetyoB/assets/129088807/c39a3b61-5464-4290-9238-2b875ec34e9c)
+
+- Desktop : <br>
+![Screenshot_22](https://github.com/RevoU-FSSE-2/week-17-RPrasetyoB/assets/129088807/4185d0ec-1060-4bab-89b5-7e9583ab576e)
+
 ## Deployment (Firebase)
 To deploy the application to Firebase, follow the Firebase hosting documentation and set up your Firebase project. Then, use the Firebase CLI to deploy the project.
 - Front-end : >> https://week-17-renaldipb.web.app
