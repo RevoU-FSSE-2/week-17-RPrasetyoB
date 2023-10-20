@@ -3,7 +3,7 @@ import { Form, Formik } from "formik";
 import { Button, TextField, Card, Typography, CardContent } from "@mui/material";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import useFetchApi from "../../utils/FetchApi";
+import  useFetchApi  from "../../utils/FetchApi";
 import Swal from "sweetalert2";
 import { useFormik } from 'formik';
 
@@ -18,7 +18,7 @@ const initialValues = {
 };
 
 const Login: React.FC = () => {
-  const { loginUser } = useFetchApi();
+const { loginUser } = useFetchApi();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -32,7 +32,7 @@ const Login: React.FC = () => {
           title: "Login",
           text: "Login successful",
         });
-        window.location.replace("/");
+        window.location.replace("/home");
       } else {
         Swal.fire({
           icon: "error",
@@ -65,7 +65,7 @@ const Login: React.FC = () => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ touched, errors, handleChange, handleBlur }) => (
+        {({ touched, errors }) => (
           <Card
             style={{
               position: "fixed",
@@ -76,17 +76,13 @@ const Login: React.FC = () => {
               padding: "20px",
             }}
           >
-            <Typography
-              sx={{ fontSize: 18 }}
-              color="text.secondary"
-              gutterBottom
-            >
+            <Typography sx={{ fontSize: 18 }} color="text.secondary" gutterBottom>
               Login Form
             </Typography>
             <Form onSubmit={formik.handleSubmit}>
               <CardContent>
                 <TextField
-                  label="Username"
+                  label="username"
                   variant="outlined"
                   name="username"
                   placeholder="Enter username"
@@ -100,7 +96,7 @@ const Login: React.FC = () => {
                   sx={{ mb: 2 }}
                 />
                 <TextField
-                  label="Password"
+                  label="password"
                   variant="outlined"
                   name="password"
                   type="password"

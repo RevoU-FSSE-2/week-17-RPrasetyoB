@@ -42,7 +42,7 @@ const AddCategory: React.FC = () => {
         title: "Add Category Success",
         text: "Successfully added category.",
       });
-      navigate("/");
+      navigate("/home");
     } else {
       Swal.fire({
         icon: "error",
@@ -54,7 +54,7 @@ const AddCategory: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate("/");
+    navigate("/home");
   };
 
   return (

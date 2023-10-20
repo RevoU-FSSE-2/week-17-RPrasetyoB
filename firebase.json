@@ -1,0 +1,73 @@
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "region": "us-central1",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ],
+  "hosting": {
+    "site": "week-17-renaldipb",
+    "public": "FE/dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/v1/tasks",
+        "function": "fetchList"
+      },
+      {
+        "source": "/v1/tasks",
+        "function": "handleSubmit"
+      },
+      {
+        "source": "/v1/tasks/:id",
+        "function": "deleteTask"
+      },
+      {
+        "source": "/v1/tasks/:id",
+        "function": "handleSubmit"
+      },
+      {
+        "source": "/v1/auth/login",
+        "function": "loginUser"
+      },
+      {
+        "source": "/v1/auth/register",
+        "function": "registerUser"
+      },
+      {
+        "source": "/v1/users/:id",
+        "function": "v1UserById"
+      },
+      {
+        "source": "/v1/reset-req",
+        "function": "v1ResetRequest"
+      },
+      {
+        "source": "/v1/**",
+        "function": "week17_rpb"
+      },
+      {
+        "source": "/app/**",
+        "destination": "/app.html"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

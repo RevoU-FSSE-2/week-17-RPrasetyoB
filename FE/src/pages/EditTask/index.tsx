@@ -50,7 +50,7 @@ const EditCategory: React.FC = () => {
           text: 'Successfully updated category.',
         });
       }
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       console.error("Error updating category", error);
     } finally {
@@ -59,7 +59,7 @@ const EditCategory: React.FC = () => {
   };
 
   const handleCancel = () => {
-    navigate('/');
+    navigate('/home');
   };
 
   return (

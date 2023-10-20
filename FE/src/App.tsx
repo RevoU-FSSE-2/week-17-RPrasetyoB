@@ -12,7 +12,7 @@ const App = () => {
       element: <PublicLayout />,
       children: [
         {
-          path: '/',
+          path: '/home',
           element: <HomePage />
         },
         {
@@ -31,7 +31,7 @@ const App = () => {
     },
     {
       element: <LoginForm />,
-      path: '/login'
+      path: '/'
     },
     {
       path: '/register',

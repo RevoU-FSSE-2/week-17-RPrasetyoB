@@ -1,2 +1,2 @@
-// export const ApiUrl = 'https://week-17-rprasetyob-production.up.railway.app';
-export const ApiUrl = 'http://localhost:4000'
+export const ApiUrl = 'https://us-central1-revou-fullstack.cloudfunctions.net/week17_rpb';
+// export const ApiUrl = 'http://localhost:4029'
