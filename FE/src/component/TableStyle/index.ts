@@ -31,9 +31,26 @@ const mainDivStyle = {
   position: "relative" as "relative",
 };
 
+const mainDivStyleMobile = {
+  alignItems: "center",
+  padding: "auto",
+  backgroundColor: "rgb(223, 222, 222)",
+  width: "100%",
+  height: "100vh",
+  position: "relative" as "relative",
+};
+
 const subDivStyle = {
   paddingTop: "10vh",
   width: "700px",
+  textAlign: "center" as "center",
+  marginLeft: "auto",
+  marginRight: "auto",
+};
+
+const subDivStyleMobile = {
+  paddingTop: "5vh",
+  width: "auto",
   textAlign: "center" as "center",
   marginLeft: "auto",
   marginRight: "auto",
@@ -48,4 +65,4 @@ const secondSubStyle = {
   marginRight: "auto"
 }
 
-export { StyledTableRow, StyledTableCell, mainDivStyle, subDivStyle, secondSubStyle };
+export { subDivStyleMobile, StyledTableRow, StyledTableCell, mainDivStyle, subDivStyle, secondSubStyle };
