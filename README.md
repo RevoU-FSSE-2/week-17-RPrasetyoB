@@ -21,7 +21,7 @@ This project provides a web-based interface to manage a collection of items. You
 - POST /v1/auth/login : Register.
 - POST /v1/tasks: Create a new task.
 - PUT /v1/tasks/:id : Update task status. (only task maker have permission)
-- DELETE /v1/tasks/:id : Delete a task. only task maker have permission)
+- DELETE /v1/tasks/:id : Delete a task. (only task maker have permission)
 
 ## Light house testing :
 - Mobile : <br>
